@@ -1,0 +1,129 @@
+﻿using System;
+using lb2_1;
+
+namespace lb2_2
+{
+    /*
+
+    Задание 2: создать двумерный массив, размерность задается
+    пользователем, заполнить его случайными числами в диапазоне от 0 до 9.
+    Отсортировать элементы массива по возрастанию вначале по строкам, а затем
+    по столбцам. Вывести на экран исходный массив, массив отсортированный по-
+    строчно, массив отсортированный по столбцам.
+
+    */
+    public delegate bool IntComparator(int lhs, int rhs);
+    public class Program
+    {
+        public static void writeArray(int[,] array, string array_name)
+        {
+            Console.WriteLine($"{array_name}[{array.GetLength(0)}, {array.GetLength(1)}] {{");
+            for (int i = 0; i < array.GetLength(0); ++i)
+            {
+                for (int j = 0; j < array.GetLength(1); ++j)
+                {
+                    Console.Write($"  {array_name}[{i}, {j}] = {array[i, j]};");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("}");
+        }
+
+        public static void swapInt(ref int lhs, ref int rhs)
+        {
+            int temp = lhs;
+            lhs = rhs;
+            rhs = temp;
+        }
+
+        public static void sortIntArrayByRows(int[,] array
+                                , IntComparator compare
+                                )
+        {
+            int n_rows = array.GetLength(0);
+            int n_columns = array.GetLength(1);
+
+            int n_swaps = 1;
+            while (n_swaps != 0)
+            {
+                n_swaps = 0;
+
+                for (int i = 0; i < n_rows; ++i)
+                {
+                    for (int j = 0; j < n_columns - 1; ++j)
+                    {
+                        if (!compare(array[i, j], array[i, j + 1]))
+                        {
+                            swapInt(ref array[i, j], ref array[i, j + 1]);
+                            ++n_swaps;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void sortIntArrayByColumns(int[,] array, IntComparator compare)
+        {
+            int n_rows = array.GetLength(0);
+            int n_columns = array.GetLength(1);
+
+            int n_swaps = 1;
+            while (n_swaps != 0)
+            {
+                n_swaps = 0;
+
+                for (int j = 0; j < n_columns; ++j)
+                {
+                    for (int i = 0; i < n_rows - 1; ++i)
+                    {
+                        if (!compare(array[i, j], array[i + 1, j]))
+                        {
+                            swapInt(ref array[i, j], ref array[i + 1, j]);
+                            ++n_swaps;
+                        }
+                    }
+                }
+            }
+        }
+
+        static void Main()
+        {
+            IntValidator pozitiveInt = (i) => { return 0 < i; };
+            IntValidator anyInt = (_) => { return true; };
+
+            int n = lb2_1.Program.readInt("Enter n (integer, 0 < n):", pozitiveInt);
+            int m = lb2_1.Program.readInt("Enter m (integer, 0 < m):", anyInt);
+            int[,] a = new int[n, m];
+
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < m; ++j)
+                {
+                    a[i, j] = lb2_1.Program.readInt("Enter a[" + i.ToString() + ", " + j.ToString() + "] (integer):", anyInt);
+                }
+            }
+
+            IntComparator ascending_order = (lhs, rhs) => { return lhs <= rhs; };
+            IntComparator descending_order = (lhs, rhs) => { return rhs <= lhs; };
+
+            Console.WriteLine("Entered:");
+            writeArray(a, "a");
+
+            sortIntArrayByRows(a, ascending_order);
+            Console.WriteLine("Sorted by rows:");
+            writeArray(a, "a");
+
+            sortIntArrayByColumns(a, ascending_order);
+            Console.WriteLine("Sorted by columns:");
+            writeArray(a, "a");
+            // writeArray(b, "b");
+
+            // sortIntArray(a, true);
+            // sortIntArray(b, false);
+
+            // Console.WriteLine("Sorted:");
+            // writeArray(a, "a");
+            // writeArray(b, "b");
+        }
+    }
+}
