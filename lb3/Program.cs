@@ -32,6 +32,7 @@ namespace lb3
         static List<bank.Account> accounts = new List<bank.Account>();
 
         static uint client_id_counter = 0;
+        static uint account_id_counter = 0;
 
         static bool doIf(Procedure do_work, bool condition)
         {
@@ -60,9 +61,9 @@ namespace lb3
         static void printClientHelp()
         {
             Console.WriteLine("Available client commands:");
-            Console.WriteLine("list");
-            Console.WriteLine("new");
-            Console.WriteLine("remove <client-id>");
+            Console.WriteLine("  list");
+            Console.WriteLine("  new");
+            Console.WriteLine("  remove <client-id>");
         }
 
         static void resolveClientListCommand(Queue<string> command_words)
@@ -85,51 +86,15 @@ namespace lb3
             }
         }
 
-        delegate bool StringConverter<T>(out T t, string? src);
-
-        static StringConverter<int> string_to_int_converter = (out int i, string? src) =>
+        static bool resolveClientNewCommand()
         {
-            return int.TryParse(src, out i);
-        };
+            string first_name = "";
+            string second_name = "";
+            string patronymic = "";
+            uint age = 0;
+            string workplace = "";
 
-        static bool read<T>(out T t, StringConverter<T> convert)
-        {
-            return convert(out t, Console.ReadLine()?.Trim());
-        }
-
-        delegate bool Validator<T>(T t);
-
-        static T readValid<T>(string message, StringConverter<T> converter, Validator<T> validate)
-        {
-            T t;
-
-            do
-            {
-                Console.WriteLine(message);
-            } while ((!read<T>(out t, converter)) || (!validate(t)));
-
-            return t;
-        }
-
-        static bool isValidMember<T>(T? t)
-        {
-            if (t == null)
-            {
-                Console.WriteLine("New client will not be added");
-                return false;
-            }
-
-            return true;
-        }
-        static void resolveClientNewCommand()
-        {
-            string? first_name;
-            string? second_name;
-            string? patronymic;
-            uint? age;
-            string? workplace;
-
-            StringConverter<string?> string_converter = (out string? t, string? src) =>
+            utility.Console.StringConverter<string?> string_converter = (out string? t, string? src) =>
             {
                 if (src == null)
                 {
@@ -146,9 +111,9 @@ namespace lb3
                 t = src;
                 return true;
             };
-            Validator<string?> string_validator = (s) => { return s != ""; };
+            utility.Console.Validator<string?> string_validator = (s) => { return s != ""; };
 
-            StringConverter<uint?> uint_converter = (out uint? t, string? src) =>
+            utility.Console.StringConverter<uint?> uint_converter = (out uint? t, string? src) =>
             {
                 if (src == null)
                 {
@@ -172,47 +137,48 @@ namespace lb3
                 t = ui;
                 return true;
             };
-            Validator<uint?> age_validator = (a) => { return (a == null) || (14 <= a); };
+            utility.Console.Validator<uint?> age_validator = (a) => { return (a == null) || (14 <= a); };
 
-            first_name = readValid<string?>("Enter first name or 'abort':"
-                                           , string_converter
-                                           , string_validator
-                                           );
-            if (!isValidMember(first_name))
-            { return; }
-            second_name = readValid<string?>("Enter second name or 'abort':"
-                                           , string_converter
-                                           , string_validator
-                                           );
-            if (!isValidMember(second_name))
-            { return; }
-            patronymic = readValid<string?>("Enter patronymic or 'abort':"
-                                           , string_converter
-                                           , string_validator
-                                           );
-            if (!isValidMember(patronymic))
-            { return; }
+            if (!utility.Console.readNonNull<string>(ref first_name
+                                                    , "Enter first name or 'abort':"
+                                                    , string_converter
+                                                    , string_validator
+                                                    ))
+            { return false; }
+            if (!utility.Console.readNonNull<string>(ref second_name
+                                                    , "Enter second name or 'abort':"
+                                                    , string_converter
+                                                    , string_validator
+                                                    ))
+            { return false; }
+            if (!utility.Console.readNonNull<string>(ref patronymic
+                                                    , "Enter patronymic name or 'abort':"
+                                                    , string_converter
+                                                    , string_validator
+                                                    ))
+            { return false; }
+            {
+                uint? temp = utility.Console.readValid<uint?>("Enter age (>= 14) or 'abort':"
+                                                             , uint_converter
+                                                             , age_validator
+                                                             );
+                if (temp == null)
+                { return false; }
 
-            age = readValid<uint?>("Enter age (>= 14) or 'abort':"
-                                 , uint_converter
-                                 , age_validator
-                                 );
-            if (!isValidMember(age))
-            { return; }
-
-            workplace = readValid<string?>("Enter workplace or 'abort':"
-                                           , string_converter
-                                           , string_validator
-                                           );
-            if (!isValidMember(workplace))
-            { return; }
-
+                age = (uint)temp;
+            }
+            if (!utility.Console.readNonNull<string>(ref workplace
+                                                    , "Enter workplace or 'abort':"
+                                                    , string_converter
+                                                    , string_validator
+                                                    ))
+            { return false; }
             clients.Add(new bank.Client(client_id_counter++
                                        , new bank.PersonName(first_name, second_name, patronymic)
-                                       , (uint)age
+                                       , age
                                        , workplace
                                        ));
-            Console.WriteLine("Client was added");
+            return true;
         }
 
         static void resolveClientRemoveCommand(Queue<string> command_words)
@@ -253,7 +219,14 @@ namespace lb3
             }
             else if (command_word == "new")
             {
-                resolveClientNewCommand();
+                if (!resolveClientNewCommand())
+                {
+                    Console.WriteLine("New client will not be added");
+                }
+                else
+                {
+                    Console.WriteLine("Client was added");
+                }
             }
             else if (command_word == "remove")
             {
@@ -264,9 +237,113 @@ namespace lb3
                 printClientHelp();
             }
         }
-
+        /*
+        static void printHelp()
+        {
+            Console.WriteLine("Available commands:");
+            Console.WriteLine("  client list");
+            Console.WriteLine("  client new");
+            Console.WriteLine("  client remove <client-id>");
+            Console.WriteLine("  account open <client-id>");
+            Console.WriteLine("  account close <account-id>");
+            Console.WriteLine("  account deposit <account-id> <money>");
+            Console.WriteLine("  account withdraw  <account-id> <money>");
+            Console.WriteLine("  account balance <account-id>");
+            Console.WriteLine("  account history <account-id>");
+            Console.WriteLine("  quit");
+        }
+        */
+        static void printAccountHelp()
+        {
+            Console.WriteLine("Available account commands:");
+            Console.WriteLine("  open <client-id>");
+            Console.WriteLine("  close <account-id>");
+            Console.WriteLine("  deposit <account-id> <money>");
+            Console.WriteLine("  withdraw  <account-id> <money>");
+            Console.WriteLine("  balance <account-id>");
+            Console.WriteLine("  history <account-id>");
+        }
         static void resolveAccountCommand(Queue<string> command_words)
         {
+            string? command_word;
+
+            if (doIf(printAccountHelp, !command_words.TryDequeue(out command_word)))
+            { return; }
+
+            if (command_word == "open")
+            {
+                if (doIf(printAccountHelp, !command_words.TryDequeue(out command_word)))
+                { return; }
+
+                int client_id;
+                if (!int.TryParse(command_word, out client_id))
+                {
+                    Console.WriteLine("Client id must be positive integer or zero!");
+                    return;
+                }
+
+                bank.Client? client = clients.Find(client => client.id == client_id);
+
+                if (client == null)
+                {
+                    Console.WriteLine($"Client with id {client_id} is not found!");
+                    return;
+                }
+
+                client.accounts.Add(new bank.Account(account_id_counter));
+                Console.WriteLine($"Client {client_id} opened account {account_id_counter++}");
+            }
+            else if (command_word == "close")
+            {
+                int account_id;
+                if (!int.TryParse(command_word, out account_id))
+                {
+                    Console.WriteLine("Account id must be positive integer or zero!");
+                    return;
+                }
+
+                bank.Client? client = null;
+                bank.Account? account = null;
+                foreach (bank.Client maybe_client in clients)
+                {
+                    bank.Account? maybe_account = maybe_client.accounts.Find(account => account.id == account_id);
+                    if (maybe_account != null)
+                    {
+                        client = maybe_client;
+                        account = maybe_account;
+                        break;
+                    }
+                }
+
+                if (client == null || account == null)
+                {
+                    Console.WriteLine($"Account with id {account_id} is not found!");
+                    return;
+                }
+
+                client.accounts.Remove(account);
+                Console.WriteLine($"Account {account_id} closed");
+            }
+            else if (command_word == "deposite")
+            {
+                ;
+            }
+            else if (command_word == "withdraw")
+            {
+                ;
+            }
+            else if (command_word == "balance")
+            {
+                ;
+            }
+            else if (command_word == "history")
+            {
+                ;
+            }
+            else
+            {
+                printAccountHelp();
+            }
         }
 
         static bool resolveCommand(string command)
