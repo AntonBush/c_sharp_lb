@@ -26,18 +26,21 @@ namespace lb3.bank
             _addToHistory("Deposite: " + money.ToString() + ", balance: " + balance.ToString());
         }
 
-        public void withdraw(uint money)
+        public bool withdraw(uint money)
         {
-            if (money <= balance)
+            if (balance < money)
             {
-                balance -= money;
+                return false;
             }
+
+            balance -= money;
             _addToHistory("Withdraw: " + money.ToString() + ", remains: " + balance.ToString());
+            return true;
         }
 
         void _addToHistory(string message)
         {
-            history.Add(message + "| " + DateTime.Now.ToString());
+            _history.Add(message + " | " + DateTime.Now.ToString());
         }
     }
 }

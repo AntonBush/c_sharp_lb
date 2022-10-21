@@ -237,22 +237,7 @@ namespace lb3
                 printClientHelp();
             }
         }
-        /*
-        static void printHelp()
-        {
-            Console.WriteLine("Available commands:");
-            Console.WriteLine("  client list");
-            Console.WriteLine("  client new");
-            Console.WriteLine("  client remove <client-id>");
-            Console.WriteLine("  account open <client-id>");
-            Console.WriteLine("  account close <account-id>");
-            Console.WriteLine("  account deposit <account-id> <money>");
-            Console.WriteLine("  account withdraw  <account-id> <money>");
-            Console.WriteLine("  account balance <account-id>");
-            Console.WriteLine("  account history <account-id>");
-            Console.WriteLine("  quit");
-        }
-        */
+
         static void printAccountHelp()
         {
             Console.WriteLine("Available account commands:");
@@ -263,6 +248,25 @@ namespace lb3
             Console.WriteLine("  balance <account-id>");
             Console.WriteLine("  history <account-id>");
         }
+
+        static Tuple<bank.Client, bank.Account>? findClientAccount(Predicate<bank.Account> condition)
+        {
+            foreach (bank.Client maybe_client in clients)
+            {
+                bank.Account? maybe_account = maybe_client.accounts.Find(condition);
+                if (maybe_account != null)
+                {
+                    return new Tuple<bank.Client, bank.Account>(maybe_client, maybe_account);
+                }
+            }
+
+            return null;
+        }
+        enum ChangeBalanceCommand
+        {
+            withdraw,
+            deposite
+        };
         static void resolveAccountCommand(Queue<string> command_words)
         {
             string? command_word;
@@ -278,7 +282,7 @@ namespace lb3
                 int client_id;
                 if (!int.TryParse(command_word, out client_id))
                 {
-                    Console.WriteLine("Client id must be positive integer or zero!");
+                    Console.WriteLine("Client id must be integer!");
                     return;
                 }
 
@@ -292,53 +296,100 @@ namespace lb3
 
                 client.accounts.Add(new bank.Account(account_id_counter));
                 Console.WriteLine($"Client {client_id} opened account {account_id_counter++}");
+
+                return;
             }
-            else if (command_word == "close")
+
+            var read_client_account = () =>
             {
-                int account_id;
-                if (!int.TryParse(command_word, out account_id))
+                if (doIf(printAccountHelp, !command_words.TryDequeue(out command_word)))
+                { return null; }
+
+                uint account_id;
+                if (!uint.TryParse(command_word, out account_id))
                 {
-                    Console.WriteLine("Account id must be positive integer or zero!");
-                    return;
+                    Console.WriteLine("Account id must be integer!");
+                    return null;
                 }
 
-                bank.Client? client = null;
-                bank.Account? account = null;
-                foreach (bank.Client maybe_client in clients)
-                {
-                    bank.Account? maybe_account = maybe_client.accounts.Find(account => account.id == account_id);
-                    if (maybe_account != null)
-                    {
-                        client = maybe_client;
-                        account = maybe_account;
-                        break;
-                    }
-                }
-
-                if (client == null || account == null)
+                var client_account = findClientAccount(a => a.id == account_id);
+                if (client_account == null)
                 {
                     Console.WriteLine($"Account with id {account_id} is not found!");
+                    return null;
+                }
+
+                return client_account;
+            };
+
+            Tuple<bank.Client, bank.Account>? client_account;
+            if (command_word == "close")
+            {
+                client_account = read_client_account();
+                if (client_account == null) { return; }
+
+                client_account.Item1.accounts.Remove(client_account.Item2);
+                Console.WriteLine($"Account {client_account.Item2.id} closed");
+            }
+            else if (command_word == "deposit")
+            {
+                client_account = read_client_account();
+                if (client_account == null) { return; }
+
+                if (doIf(printAccountHelp, !command_words.TryDequeue(out command_word)))
+                { return; }
+
+                uint money;
+                if (!uint.TryParse(command_word, out money))
+                {
+                    Console.WriteLine("Money must be positive integer!");
                     return;
                 }
 
-                client.accounts.Remove(account);
-                Console.WriteLine($"Account {account_id} closed");
-            }
-            else if (command_word == "deposite")
-            {
-                ;
+                client_account.Item2.deposite(money);
+                Console.WriteLine($"Account {client_account.Item2.id} deposited by {money}");
             }
             else if (command_word == "withdraw")
             {
-                ;
+                client_account = read_client_account();
+                if (client_account == null) { return; }
+
+                if (doIf(printAccountHelp, !command_words.TryDequeue(out command_word)))
+                { return; }
+
+                uint money;
+                if (!uint.TryParse(command_word, out money))
+                {
+                    Console.WriteLine("Money must be positive integer!");
+                    return;
+                }
+
+                if (!client_account.Item2.withdraw(money))
+                {
+                    Console.WriteLine($"Not enough money on account");
+                }
+                else
+                {
+                    Console.WriteLine($"Account {client_account.Item2.id} withdrawed by {money}");
+                }
             }
             else if (command_word == "balance")
             {
-                ;
+                client_account = read_client_account();
+                if (client_account == null) { return; }
+
+                Console.WriteLine($"Account {client_account.Item2.id} balance: {client_account.Item2.balance}");
             }
             else if (command_word == "history")
             {
-                ;
+                client_account = read_client_account();
+                if (client_account == null) { return; }
+
+                Console.WriteLine($"Account {client_account.Item2.id} history:");
+                foreach (string history_item in client_account.Item2.history)
+                {
+                    Console.WriteLine($"  {history_item}");
+                }
             }
             else
             {
@@ -354,7 +405,7 @@ namespace lb3
             if (command == "")
             { return true; }
 
-            var command_words = new Queue<string>(command.Split(' '));
+            var command_words = new Queue<string>(command.Trim().Split(' '));
             string? command_word;
 
             if (doIf(printHelp, !command_words.TryDequeue(out command_word)))
