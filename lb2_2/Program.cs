@@ -116,14 +116,6 @@ namespace lb2_2
             sortIntArrayByColumns(a, ascending_order);
             Console.WriteLine("Sorted by columns:");
             writeArray(a, "a");
-            // writeArray(b, "b");
-
-            // sortIntArray(a, true);
-            // sortIntArray(b, false);
-
-            // Console.WriteLine("Sorted:");
-            // writeArray(a, "a");
-            // writeArray(b, "b");
         }
     }
 }
