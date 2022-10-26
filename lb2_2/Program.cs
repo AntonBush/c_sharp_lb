@@ -62,6 +62,32 @@ namespace lb2_2
             }
         }
 
+        public static void sortIntArrayByRows_(int[,] array
+                        , Func<int, int, bool> compare
+                        )
+        {
+            int n_rows = array.GetLength(0);
+            int n_columns = array.GetLength(1);
+
+            int n_swaps = 1;
+            while (n_swaps != 0)
+            {
+                n_swaps = 0;
+
+                for (int i = 0; i < n_rows; ++i)
+                {
+                    for (int j = 0; j < n_columns - 1; ++j)
+                    {
+                        if (!compare(array[i, j], array[i, j + 1]))
+                        {
+                            swapInt(ref array[i, j], ref array[i, j + 1]);
+                            ++n_swaps;
+                        }
+                    }
+                }
+            }
+        }
+
         public static void sortIntArrayByColumns(int[,] array, IntComparator compare)
         {
             int n_rows = array.GetLength(0);
@@ -103,19 +129,24 @@ namespace lb2_2
                 }
             }
 
-            IntComparator ascending_order = (lhs, rhs) => { return lhs <= rhs; };
-            IntComparator descending_order = (lhs, rhs) => { return rhs <= lhs; };
+            Func<int, int, bool> ascending_order = (lhs, rhs) => { return lhs <= rhs; };
 
             Console.WriteLine("Entered:");
             writeArray(a, "a");
 
-            sortIntArrayByRows(a, ascending_order);
+            sortIntArrayByRows(a, (lhs, rhs) => { return lhs <= rhs; });
             Console.WriteLine("Sorted by rows:");
             writeArray(a, "a");
 
-            sortIntArrayByColumns(a, ascending_order);
+            sortIntArrayByColumns(a, intLess);
             Console.WriteLine("Sorted by columns:");
             writeArray(a, "a");
+
+            sortIntArrayByRows_(a, ascending_order);
+            Console.WriteLine("Sorted by rows:");
+            writeArray(a, "a");
         }
+
+        static bool intLess(int lhs, int rhs) { return lhs <= rhs; }
     }
 }
