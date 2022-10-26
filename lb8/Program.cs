@@ -13,14 +13,12 @@
 */
 
 Console.WriteLine("Welcome to Float Divider Tycoon!");
+printHelp();
 
 string? input;
 lb8.Divider divider = new lb8.Divider();
 while (true)
 {
-    Console.WriteLine("Enter 'quit' to exit program");
-    Console.WriteLine("Or enter 'reset' to set numerator with the next command");
-    Console.WriteLine("Or enter real number to divide numerator (default value is not set):");
     input = Console.ReadLine();
     Console.WriteLine($"Entered: '{(input == null ? "null" : input)}'");
 
@@ -42,6 +40,7 @@ while (true)
             throw new Exception("Real number length must be less or equal 20.");
         }
         Console.WriteLine($"Result: {divideAndConquer(divider, input)}");
+        continue;
     }
     catch (DivideByZeroException)
     {
@@ -55,9 +54,17 @@ while (true)
     {
         Console.WriteLine(e.Message);
     }
+    printHelp();
 }
 
 Console.WriteLine("We will miss you");
+
+void printHelp()
+{
+    Console.WriteLine("Enter 'quit' to exit program");
+    Console.WriteLine("Or enter 'reset' to set numerator with the next command");
+    Console.WriteLine("Or enter real number to divide numerator (default value is not set):");
+}
 
 double divideAndConquer(lb8.Divider divider, string s)
 {
