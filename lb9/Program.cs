@@ -23,6 +23,8 @@
 
 */
 
+Console.WriteLine("App: Magashop");
+
 namespace lb9
 {
     class Customer
@@ -37,6 +39,11 @@ namespace lb9
             this.address = address;
             this.discount = discount;
         }
+
+        override public string ToString()
+        {
+            return $"name: {name}; address: {address}; discount: {discount}";
+        }
     }
 
     class Product
@@ -49,11 +56,16 @@ namespace lb9
             this.title = title;
             this.price = price;
         }
+
+        override public string ToString()
+        {
+            return $"title: {title}; price: {price}";
+        }
     }
 
     class ProductDatabase
     {
-        public Dictionary<?, Product>;
+        public Dictionary<string, Product> data;
     }
 
     class OrderLine
@@ -61,10 +73,15 @@ namespace lb9
         public int count { get; }
         public Product product { get; }
 
-        public Product(int count, Product product)
+        public OrderLine(int count, Product product)
         {
             this.count = count;
             this.product = product;
+        }
+
+        override public string ToString()
+        {
+            return $"count: {count}; product: [{product}]";
         }
     }
 
@@ -72,8 +89,53 @@ namespace lb9
     {
         public int number { get; }
         public Customer customer { get; }
-        public decimal discount { get; }
-        public decimal cost { get; }
-        public List<OrderLine> lines { get; }
+        public decimal discount
+        {
+            get { return (_calculateTotalCost() * (decimal)customer.discount); }
+        }
+        public decimal cost
+        {
+            get { return (_calculateTotalCost() * (decimal)(1 - customer.discount)); }
+        }
+        public List<OrderLine> lines { get { return new List<OrderLine>(_lines); } }
+
+        public Order(Customer customer)
+        {
+            number = _number_counter++;
+            this.customer = customer;
+            _lines = new List<OrderLine>();
+        }
+
+        public void addLine(OrderLine line)
+        {
+            _lines.Add(line);
+        }
+
+        override public string ToString()
+        {
+            string temp = $"number: [{number}]\n";
+            temp += $"customer: [{customer}]\n";
+            temp += $"discount: [{discount}]\n";
+            temp += $"cost: [{cost}]\n";
+            temp += $"lines: [{_lines.Count}]\n";
+            foreach (var line in _lines)
+            {
+                temp += $"  {line}\n";
+            }
+            return temp;
+        }
+
+        static int _number_counter = 0;
+        List<OrderLine> _lines;
+
+        decimal _calculateTotalCost()
+        {
+            decimal cost = 0;
+            foreach (var line in _lines)
+            {
+                cost += line.count * line.product.price;
+            }
+            return cost;
+        }
     }
 }
