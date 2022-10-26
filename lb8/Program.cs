@@ -31,6 +31,9 @@ while (true)
             throw new Exception("Nothing was read.");
         }
 
+        input = input.Trim();
+        Console.WriteLine($"Trimed: '{input}'");
+
         if (input == "quit") break;
         if (input == "reset") { divider.reset(); continue; }
 
