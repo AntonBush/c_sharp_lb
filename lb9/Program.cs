@@ -26,17 +26,71 @@
 using shop = lb9.shop;
 
 Console.WriteLine("App: Magashop");
-// var temp = new shop.ProductDatabase();
-// temp.add(new shop.Product("Anton", 200));
-// Console.WriteLine(temp);
-// Console.WriteLine(shop.ProductDatabase.from("{\"Q205\":{\"title\":\"Anton\",\"price\":200}}"));
-// Console.WriteLine(shop.ProductDatabase.from("{\"Q205\":{\"title\":\"Anton\"}}"));
-var temp = new shop.Order(new shop.Customer("Anton", "Moscow", 0.2));
-temp.add(new shop.OrderLine(10, new shop.Product("Kolbasa", 200)));
-temp.add(new shop.OrderLine(20, new shop.Product("AK-47", 35000)));
-Console.WriteLine(temp);
-Console.WriteLine(shop.Order.from(temp.ToString()));
-Console.WriteLine(temp.ToString() == shop.Order.from(temp.ToString())?.ToString());
-Console.WriteLine(shop.Order.from(
-"{ \"customer\":{ \"name\":\"Anton\",\"address\":\"Moscow\",\"discount\":0.2},\"discount\":140400.0,\"cost\":561600.0,\"lines\":[{ \"count\":10,\"product\":{ \"title\":\"Kolbasa\",\"price\":200} },{ \"count\":20,\"product\":{ \"title\":\"AK-47\",\"price\":35000} }]}"
-));
+
+if (args.Length < 1)
+{
+    throw new Exception("First parameter must be path to DB.");
+}
+
+var db = shop.ProductDatabase.from(File.ReadAllText(args[0]));
+if (db == null)
+{
+    throw new Exception("DB is corrupted.");
+}
+
+Console.WriteLine("Loaded DB:");
+Console.WriteLine(db);
+
+var customer = registerCustomer();
+var order = makeOrder(customer, db);
+
+var path = readLine("Enter path:");
+Console.WriteLine($"Entered: {path}");
+
+File.WriteAllText(path, order.ToString());
+Console.WriteLine("App: closed");
+
+shop.Customer registerCustomer()
+{
+    var customer = new shop.Customer(readLine("Enter customer name:").Trim()
+                                    , readLine("Enter customer address:").Trim()
+                                    , double.Parse(readLine("Enter customer discount:"))
+                                    );
+    Console.WriteLine($"Entered: {customer}");
+    return customer;
+}
+
+shop.Order makeOrder(shop.Customer customer, shop.ProductDatabase db)
+{
+    var order = new shop.Order(customer);
+
+    var input = readLine("Enter product key or empty line:").Trim();
+    while (input != "")
+    {
+        try
+        {
+            var product = db.at(input);
+            var count = int.Parse(readLine("Enter number of products:"));
+            order.add(new shop.OrderLine(count, product));
+            input = readLine("Enter product key or empty line:").Trim();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    Console.WriteLine($"Entered: {order}");
+    return order;
+}
+
+string readLine(string? message)
+{
+    Console.WriteLine(message);
+    var str = Console.ReadLine();
+    if (str == null)
+    {
+        throw new Exception("Nothing was read");
+    }
+    return str;
+}

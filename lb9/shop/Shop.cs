@@ -36,6 +36,10 @@ public class Customer
     {
         this.name = name;
         this.address = address;
+        if (discount < 0 || 1 < discount)
+        {
+            throw new Exception($"Discount must be in range [0..1]. Actual: discount");
+        }
         this.discount = discount;
     }
 
@@ -137,6 +141,20 @@ public class ProductDatabase
             key = $"{letter}{number}";
         } while (_data.ContainsKey(key));
         _data.Add(key, product);
+    }
+
+    public bool containsKey(string s)
+    {
+        return _data.ContainsKey(s);
+    }
+
+    public Product at(string s)
+    {
+        if (!containsKey(s))
+        {
+            throw new Exception($"No such key in db: {s}");
+        }
+        return _data[s];
     }
 
     public override string ToString()

@@ -1,0 +1,26 @@
+{
+    "X888": {
+        "title": "X chromosome",
+        "price": 45
+    },
+    "Y666": {
+        "title": "Y chromosome",
+        "price": 47
+    },
+    "A047": {
+        "title": "AK-47",
+        "price": 35000
+    },
+    "T034": {
+        "title": "T-34",
+        "price": 800000
+    },
+    "X011": {
+        "title": "X-wing",
+        "price": 1000000
+    },
+    "S000": {
+        "title": "Star Destroyer",
+        "price": 80000000
+    }
+}
