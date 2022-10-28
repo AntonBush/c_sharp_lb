@@ -23,119 +23,20 @@
 
 */
 
+using shop = lb9.shop;
+
 Console.WriteLine("App: Magashop");
-
-namespace lb9
-{
-    class Customer
-    {
-        public string name { get; }
-        public string address { get; }
-        public double discount { get; }
-
-        Customer(string name, string address, double discount)
-        {
-            this.name = name;
-            this.address = address;
-            this.discount = discount;
-        }
-
-        override public string ToString()
-        {
-            return $"name: {name}; address: {address}; discount: {discount}";
-        }
-    }
-
-    class Product
-    {
-        public string title { get; }
-        public decimal price { get; }
-
-        public Product(string title, decimal price)
-        {
-            this.title = title;
-            this.price = price;
-        }
-
-        override public string ToString()
-        {
-            return $"title: {title}; price: {price}";
-        }
-    }
-
-    class ProductDatabase
-    {
-        public Dictionary<string, Product> data;
-    }
-
-    class OrderLine
-    {
-        public int count { get; }
-        public Product product { get; }
-
-        public OrderLine(int count, Product product)
-        {
-            this.count = count;
-            this.product = product;
-        }
-
-        override public string ToString()
-        {
-            return $"count: {count}; product: [{product}]";
-        }
-    }
-
-    class Order
-    {
-        public int number { get; }
-        public Customer customer { get; }
-        public decimal discount
-        {
-            get { return (_calculateTotalCost() * (decimal)customer.discount); }
-        }
-        public decimal cost
-        {
-            get { return (_calculateTotalCost() * (decimal)(1 - customer.discount)); }
-        }
-        public List<OrderLine> lines { get { return new List<OrderLine>(_lines); } }
-
-        public Order(Customer customer)
-        {
-            number = _number_counter++;
-            this.customer = customer;
-            _lines = new List<OrderLine>();
-        }
-
-        public void addLine(OrderLine line)
-        {
-            _lines.Add(line);
-        }
-
-        override public string ToString()
-        {
-            string temp = $"number: [{number}]\n";
-            temp += $"customer: [{customer}]\n";
-            temp += $"discount: [{discount}]\n";
-            temp += $"cost: [{cost}]\n";
-            temp += $"lines: [{_lines.Count}]\n";
-            foreach (var line in _lines)
-            {
-                temp += $"  {line}\n";
-            }
-            return temp;
-        }
-
-        static int _number_counter = 0;
-        List<OrderLine> _lines;
-
-        decimal _calculateTotalCost()
-        {
-            decimal cost = 0;
-            foreach (var line in _lines)
-            {
-                cost += line.count * line.product.price;
-            }
-            return cost;
-        }
-    }
-}
+// var temp = new shop.ProductDatabase();
+// temp.add(new shop.Product("Anton", 200));
+// Console.WriteLine(temp);
+// Console.WriteLine(shop.ProductDatabase.from("{\"Q205\":{\"title\":\"Anton\",\"price\":200}}"));
+// Console.WriteLine(shop.ProductDatabase.from("{\"Q205\":{\"title\":\"Anton\"}}"));
+var temp = new shop.Order(new shop.Customer("Anton", "Moscow", 0.2));
+temp.add(new shop.OrderLine(10, new shop.Product("Kolbasa", 200)));
+temp.add(new shop.OrderLine(20, new shop.Product("AK-47", 35000)));
+Console.WriteLine(temp);
+Console.WriteLine(shop.Order.from(temp.ToString()));
+Console.WriteLine(temp.ToString() == shop.Order.from(temp.ToString())?.ToString());
+Console.WriteLine(shop.Order.from(
+"{ \"customer\":{ \"name\":\"Anton\",\"address\":\"Moscow\",\"discount\":0.2},\"discount\":140400.0,\"cost\":561600.0,\"lines\":[{ \"count\":10,\"product\":{ \"title\":\"Kolbasa\",\"price\":200} },{ \"count\":20,\"product\":{ \"title\":\"AK-47\",\"price\":35000} }]}"
+));
