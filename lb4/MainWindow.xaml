@@ -6,7 +6,89 @@
         xmlns:local="clr-namespace:lb4"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid x:Name="layout">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
 
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            FontSize="20"
+            FontWeight="Bold"
+            HorizontalAlignment="Center"
+            Grid.ColumnSpan="3"
+            Grid.Row="0"
+            >Clients
+        </TextBlock>
+
+            <!-- ItemsSource="{Binding Source={StaticResource EmployeeInfoDataSource}}" -->
+        <ListView
+            x:Name="client_list"
+            Grid.Row="1"
+            Grid.RowSpan="6"
+            Grid.ColumnSpan="2"
+            >
+            <ListView.View>
+                <GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Path=id}"
+                        Header="Client No."
+                        Width="100"/>
+
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Path=name}"
+                        Header="Name"
+                        Width="100"
+                        />
+                </GridView>
+
+            </ListView.View>
+        </ListView>
+
+        <Button
+            x:Name="new_button"
+            Width="100"
+            Height="30"
+            Content="New"
+            Grid.Row="1"
+            Grid.Column="2"
+            Click="clickNewButton"
+            />
+        <Button
+            x:Name="open_button"
+            Width="100"
+            Height="30"
+            Content="Open"
+            Grid.Row="2"
+            Grid.Column="2"
+            Click="clickOpenButton"
+            />
+        <Button
+            x:Name="remove_button"
+            Width="100"
+            Height="30"
+            Content="Remove"
+            Grid.Row="3"
+            Grid.Column="2"
+            Click="clickRemoveButton"
+            />
+
+<!--  
+        <TextBlock FontSize="20" FontWeight="Bold" Grid.ColumnSpan="3" Grid.Row="0">2005 Products Shipped</TextBlock>
+        <TextBlock FontSize="12" FontWeight="Bold" Grid.Row="1" Grid.Column="0">Quarter 1</TextBlock>
+        <TextBox x:Name="textBox1" Width="150" Height="30" VerticalAlignment="Top" Margin="20" />
+        <Button x:Name="button1"  Width="100" Height="30" Content="Кнопка" Click="clickButton" />
+ -->
     </Grid>
 </Window>

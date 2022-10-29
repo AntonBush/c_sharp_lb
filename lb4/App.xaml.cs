@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+
+Задание: 
+Создать интерфейс к программе, созданной в лабораторной работе 3. 
+Ввод сведений о новых клиентах и счетах реализовать через дополнительные 
+формы.
+
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
