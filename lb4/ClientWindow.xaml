@@ -34,7 +34,7 @@
             VerticalAlignment="Center"
             Grid.Row="0"
             Grid.ColumnSpan="3"
-            >New Client
+            >Client
         </TextBlock>
 
         <TextBlock

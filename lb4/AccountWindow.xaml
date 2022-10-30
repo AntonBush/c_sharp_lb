@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="AccountWindow" Height="450" Width="800"
         >
-    <Grid x:Name="layout" DataContext="{Binding client}"><!--
+    <Grid x:Name="layout" DataContext="{Binding account}">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -34,7 +34,7 @@
             VerticalAlignment="Center"
             Grid.Row="0"
             Grid.ColumnSpan="3"
-            >New Client
+            >Account
         </TextBlock>
 
         <TextBlock
@@ -45,7 +45,8 @@
             HorizontalAlignment="Center"
             TextAlignment="Center"
             Grid.Row="1"
-            >Client No.
+            Grid.Column="2"
+            >Account No.
         </TextBlock>
         <TextBlock
             Text="{Binding id}"
@@ -53,6 +54,7 @@
             Width="150"
             Height="30"
             Grid.Row="2"
+            Grid.Column="2"
             />
 
         <TextBlock
@@ -63,15 +65,37 @@
             HorizontalAlignment="Center"
             TextAlignment="Center"
             Grid.Row="3"
-            >Name
+            Grid.Column="2"
+            >Balance
         </TextBlock>
         <TextBlock
-            Text="{Binding name}"
+            Text="{Binding balance}"
             FontStyle="Italic"
             Width="150"
             Height="30"
             Grid.Row="4"
+            Grid.Column="2"
             />
+
+        <TextBlock
+            FontSize="20"
+            FontWeight="Bold"
+            Width="150"
+            Height="30"
+            HorizontalAlignment="Center"
+            TextAlignment="Center"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            >History
+        </TextBlock>
+        <ListView
+            x:Name="history_list"
+            Grid.Row="2"
+            Grid.RowSpan="8"
+            Grid.ColumnSpan="2"
+            ItemsSource="{Binding history}"
+            >
+        </ListView>
 
         <TextBlock
             FontSize="20"
@@ -81,97 +105,35 @@
             HorizontalAlignment="Center"
             TextAlignment="Center"
             Grid.Row="5"
-            >Age
+            Grid.Column="2"
+            >Money
         </TextBlock>
-        <TextBlock
-            Text="{Binding age}"
-            FontStyle="Italic"
+        <TextBox
+            x:Name="money_textbox"
             Width="150"
             Height="30"
             Grid.Row="6"
+            Grid.Column="2"
             />
-
-        <TextBlock
-            FontSize="20"
-            FontWeight="Bold"
-            Width="150"
+        <Button
+            x:Name="deposit_button"
+            Width="100"
             Height="30"
-            HorizontalAlignment="Center"
-            TextAlignment="Center"
+            Content="Deposit"
             Grid.Row="7"
-            >Workplace
-        </TextBlock>
-        <TextBlock
-            Text="{Binding workplace}"
-            FontStyle="Italic"
-            Width="150"
+            Grid.Column="2"
+            Click="clickDepositButton"
+            />
+        <Button
+            x:Name="withdraw_button"
+            Width="100"
             Height="30"
+            Content="Withdraw"
             Grid.Row="8"
+            Grid.Column="2"
+            Click="clickWithdrawButton"
             />
 
-        <TextBlock
-            FontSize="20"
-            FontWeight="Bold"
-            Width="150"
-            Height="30"
-            HorizontalAlignment="Center"
-            TextAlignment="Center"
-            Grid.Row="1"
-            Grid.Column="1"
-            >Accounts
-        </TextBlock>
-        <ListView
-            x:Name="account_list"
-            Grid.Row="2"
-            Grid.RowSpan="7"
-            Grid.Column="1"
-            ItemsSource="{Binding accounts}"
-            >
-            <ListView.View>
-                <GridView AllowsColumnReorder="true">
-                    <GridViewColumn
-                        Header="Account No."
-                        Width="100"
-                        DisplayMemberBinding="{Binding id}"
-                        />
-
-                    <GridViewColumn
-                        Header="Balance"
-                        Width="100"
-                        DisplayMemberBinding="{Binding balance}"
-                        />
-                </GridView>
-            </ListView.View>
-        </ListView>
-
-        <Button
-            x:Name="new_button"
-            Width="100"
-            Height="30"
-            Content="New"
-            Grid.Row="1"
-            Grid.Column="2"
-            Click="clickNewButton"
-            />
-        <Button
-            x:Name="open_button"
-            Width="100"
-            Height="30"
-            Content="Open"
-            Grid.Row="2"
-            Grid.Column="2"
-            Click="clickOpenButton"
-            />
-        <Button
-            x:Name="remove_button"
-            Width="100"
-            Height="30"
-            Content="Remove"
-            Grid.Row="3"
-            Grid.Column="2"
-            Click="clickRemoveButton"
-            />
--->
         <!--  
         <TextBlock FontSize="20" FontWeight="Bold" Grid.ColumnSpan="3" Grid.Row="0">2005 Products Shipped</TextBlock>
         <TextBlock FontSize="12" FontWeight="Bold" Grid.Row="1" Grid.Column="0">Quarter 1</TextBlock>

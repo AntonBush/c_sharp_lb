@@ -41,6 +41,10 @@ public partial class ClientWindow : Window
     {
         this.client.client = client;
         _updateAccounts();
+        if (_account_window != null)
+        {
+            _account_window.Close();
+        }
     }
 
     void clickNewButton(object sender, RoutedEventArgs e)
@@ -52,11 +56,6 @@ public partial class ClientWindow : Window
 
         client.accounts.Add(new bank.Account(_account_id_counter++));
         _updateAccounts();
-        /*
-                var new_client_window = new NewClientWindow();
-                new_client_window.Show();
-                new_client_window.client_created += new EventHandler<NewClientEventArgs>(registerNewClient);
-        */
     }
 
     void clickOpenButton(object sender, RoutedEventArgs e)
@@ -66,16 +65,24 @@ public partial class ClientWindow : Window
             throw new Exception("Client is null");
         }
 
-        /*
-                var selected_client = (bank.Client?)client_list.SelectedItem;
-                if (selected_client == null)
-                {
-                    MessageBox.Show("Nothing selected");
-                    return;
-                }
-                var client_window = new ClientWindow(selected_client);
-                client_window.Show();
-        */
+        var selected_account = (bank.Account?)account_list.SelectedItem;
+        if (selected_account == null)
+        {
+            MessageBox.Show("Nothing selected");
+            return;
+        }
+
+        if (_account_window == null)
+        {
+            _account_window = new AccountWindow();
+            EventHandler window_close_handler = (_, _) => { _account_window.Close(); };
+            Closed += window_close_handler;
+            _account_window.Closed += (_, _) => { _account_window = null; Closed -= window_close_handler; };
+            _account_window.data_updated += (_, _) => { _updateAccounts(); };
+            _account_window.Show();
+        }
+
+        _account_window.setAccount(selected_account);
     }
 
     void clickRemoveButton(object sender, RoutedEventArgs e)
@@ -97,6 +104,7 @@ public partial class ClientWindow : Window
     }
 
     static uint _account_id_counter = 0;
+    AccountWindow? _account_window { get; set; }
 
     void _updateAccounts()
     {
