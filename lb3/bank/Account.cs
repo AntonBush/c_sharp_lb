@@ -2,13 +2,12 @@ namespace lb3.bank;
 
 public class Account
 {
-    public uint id;
+    public uint id { get; }
     public List<string> history
     {
         get { return new List<string>(_history); }
     }
     public uint balance { get; private set; }
-    List<string> _history;
 
     public Account(uint id)
     {
@@ -34,6 +33,9 @@ public class Account
         _addToHistory("Withdraw: " + money.ToString() + ", remains: " + balance.ToString());
         return true;
     }
+
+
+    readonly List<string> _history;
 
     void _addToHistory(string message)
     {

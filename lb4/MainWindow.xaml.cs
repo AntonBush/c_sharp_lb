@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,17 +23,18 @@ namespace lb4
     /// </summary>
     public partial class MainWindow : Window
     {
+        public ObservableCollection<bank.Client> clients { get; }
+
         public MainWindow()
         {
             InitializeComponent();
-            var clients = new List<bank.Client>();
-            clients.Add(new lb3.bank.Client(0, new bank.PersonName("Anton", "Bushev", "Aleks"), 22, "NONE"));
-            client_list.ItemsSource = clients;
+            DataContext = this;
+            clients = new ObservableCollection<bank.Client>();
         }
 
         void clickNewButton(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("New");
+            clients.Add(new bank.Client(_client_id_counter++, new bank.PersonName("Anton", "Bushev", "Aleks"), 23, "NONE"));
         }
 
         void clickOpenButton(object sender, RoutedEventArgs e)
@@ -42,7 +44,16 @@ namespace lb4
 
         void clickRemoveButton(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Remove");
+            var selected_item = (bank.Client?)client_list.SelectedItem;
+            if (selected_item == null)
+            {
+                MessageBox.Show("Nothing selected");
+                return;
+            }
+
+            clients.Remove(selected_item);
         }
+
+        uint _client_id_counter = 0;
     }
 }

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lb4"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        >
     <Grid x:Name="layout">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -32,27 +33,39 @@
             >Clients
         </TextBlock>
 
-            <!-- ItemsSource="{Binding Source={StaticResource EmployeeInfoDataSource}}" -->
         <ListView
             x:Name="client_list"
             Grid.Row="1"
             Grid.RowSpan="6"
             Grid.ColumnSpan="2"
+            ItemsSource="{Binding clients}"
             >
             <ListView.View>
-                <GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
+                <GridView AllowsColumnReorder="true">
                     <GridViewColumn
-                        DisplayMemberBinding="{Binding Path=id}"
                         Header="Client No."
-                        Width="100"/>
+                        Width="100"
+                        DisplayMemberBinding="{Binding id}"
+                        />
 
                     <GridViewColumn
-                        DisplayMemberBinding="{Binding Path=name}"
                         Header="Name"
                         Width="100"
+                        DisplayMemberBinding="{Binding name}"
+                        />
+
+                    <GridViewColumn
+                        Header="Age"
+                        Width="100"
+                        DisplayMemberBinding="{Binding age}"
+                        />
+
+                    <GridViewColumn
+                        Header="Workplace"
+                        Width="100"
+                        DisplayMemberBinding="{Binding workplace}"
                         />
                 </GridView>
-
             </ListView.View>
         </ListView>
 
