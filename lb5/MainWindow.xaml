@@ -7,6 +7,25 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70*"/>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="15*"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.ColumnSpan="2" ItemsSource="{Binding words}" FontSize="14"/>
+        <ListView Grid.Column="2" Grid.ColumnSpan="2" ItemsSource="{Binding found_words}" FontSize="14"/>
+        <Button Content="Load file" Grid.Row="1" Grid.ColumnSpan="2" FontSize="14" Click="clickLoadFileButton"/>
+        <TextBox x:Name="find_word_textbox" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2" FontSize="14"/>
+        <Button Content="Find word" Grid.Row="1" Grid.Column="3" FontSize="14" Click="clickFindWordButton"/>
+        <TextBlock Text="Load time:" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" FontSize="14"/>
+        <TextBlock Text="{Binding load_time}" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" FontSize="14"/>
+        <TextBlock Text="Find time:" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" FontSize="14"/>
+        <TextBlock Text="{Binding search_time}" TextAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="3" FontSize="14"/>
     </Grid>
 </Window>
