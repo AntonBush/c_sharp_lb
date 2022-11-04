@@ -1,12 +1,45 @@
-﻿<Window x:Class="lb12.MainWindow"
+﻿<Window x:Name="window"
+        x:Class="lb12.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:lb12"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        ResizeMode="NoResize">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="30*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
+        <TextBlock VerticalAlignment="Center"
+                   FontSize="25"
+                   TextAlignment="Center">Current Player</TextBlock>
+        <TextBlock Text="{Binding current_player}"
+                   VerticalAlignment="Center"
+                   FontSize="25"
+                   TextAlignment="Center"
+                   Grid.Column="1"></TextBlock>
+        
+        <Button x:Name="b0" Content="{Binding left_top}" FontSize="80" BorderThickness="5" Grid.Row="1" Click="clickCell"/>
+        <Button x:Name="b1" Content="{Binding center_top}" FontSize="80" BorderThickness="5" Grid.Row="1" Grid.Column="1" Click="clickCell"/>
+        <Button x:Name="b2" Content="{Binding right_top}" FontSize="80" BorderThickness="5" Grid.Row="1" Grid.Column="2" Click="clickCell"/>
+
+        <Button x:Name="b3" Content="{Binding left_center}" FontSize="80" BorderThickness="5" Grid.Row="2" Click="clickCell"/>
+        <Button x:Name="b4" Content="{Binding center}" FontSize="80" BorderThickness="5" Grid.Row="2" Grid.Column="1" Click="clickCell"/>
+        <Button x:Name="b5" Content="{Binding right_center}" FontSize="80" BorderThickness="5" Grid.Row="2" Grid.Column="2" Click="clickCell"/>
+
+        <Button x:Name="b6" Content="{Binding left_bottom}" FontSize="80" BorderThickness="5" Grid.Row="3" Click="clickCell"/>
+        <Button x:Name="b7" Content="{Binding center_bottom}" FontSize="80" BorderThickness="5" Grid.Row="3" Grid.Column="1" Click="clickCell"/>
+        <Button x:Name="b8" Content="{Binding right_bottom}" FontSize="80" BorderThickness="5" Grid.Row="3" Grid.Column="2" Click="clickCell"/>
     </Grid>
 </Window>

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+
+Разработать программу для игры в крестики-нолики.
+
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
